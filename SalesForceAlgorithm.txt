@@ -1,0 +1,50 @@
+// ✅ Apex Controller (SimpleContactController.cls)
+
+public class SimpleContactController {
+    public String firstName { get; set; }
+    public String lastName { get; set; }
+    public String email { get; set; }
+
+    public PageReference saveContact() {
+        if (String.isBlank(lastName)) {
+            ApexPages.addMessage(new ApexPages.Message(
+                ApexPages.Severity.ERROR, 'Last Name is required!'
+            ));
+            return null;
+        }
+
+        Contact con = new Contact(
+            FirstName = firstName,
+            LastName = lastName,
+            Email = email
+        );
+        insert con;
+
+        ApexPages.addMessage(new ApexPages.Message(
+            ApexPages.Severity.CONFIRM, 'Contact created successfully!'
+        ));
+
+        return null; // stays on the same page
+    }
+}
+
+
+// Visualforce Page (SimpleContactPage.page)
+
+<apex:page controller="SimpleContactController">
+    <apex:form>
+        <apex:pageMessages />
+
+        <apex:pageBlock title="Create a Contact">
+            <apex:pageBlockSection columns="1">
+                <apex:inputText value="{!firstName}" label="First Name"/>
+                <apex:inputText value="{!lastName}" label="Last Name" required="true"/>
+                <apex:inputText value="{!email}" label="Email"/>
+            </apex:pageBlockSection>
+
+            <apex:pageBlockButtons>
+                <apex:commandButton action="{!saveContact}" value="Save"/>
+            </apex:pageBlockButtons>
+        </apex:pageBlock>
+    </apex:form>
+</apex:page>
