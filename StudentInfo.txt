@@ -1,0 +1,44 @@
+//1.Apex Controller (Backend)
+public class StudentController {
+    public Student__c student { get; set; }
+
+    public StudentController() {
+        student = new Student__c();
+    }
+
+    public PageReference saveStudent() {
+        try {
+            insert student;
+            ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.CONFIRM, 'Student record saved successfully!'));
+            student = new Student__c(); // Reset the form
+        } catch (Exception e) {
+            ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.ERROR, 'Error: ' + e.getMessage()));
+        }
+        return null;
+    }
+}
+
+// 2. Visualforce Page (Frontend)
+<apex:page controller="StudentController">
+    <apex:form >
+        <apex:pageMessages />
+
+        <h1>Student Registration Form</h1>
+
+        <apex:pageBlock title="Enter Student Details">
+            <apex:pageBlockSection columns="2">
+
+                <apex:inputField value="{!student.Name}" label="Student Name"/>
+                <apex:inputField value="{!student.Email__c}" label="Email"/>
+                <apex:inputField value="{!student.Phone__c}" label="Phone"/>
+                <apex:inputField value="{!student.Course__c}" label="Course"/>
+                <apex:inputField value="{!student.Age__c}" label="Age"/>
+
+            </apex:pageBlockSection>
+
+            <apex:pageBlockButtons>
+                <apex:commandButton value="Save" action="{!saveStudent}" />
+            </apex:pageBlockButtons>
+        </apex:pageBlock>
+    </apex:form>
+</apex:page>
