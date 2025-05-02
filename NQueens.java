@@ -1,68 +1,61 @@
 public class NQueens {
 
-    public static boolean isSafe(char board[][],int row,int col){
+    static int count = 0;
 
-        //vertical check:
-        for(int i=row-1;i>=0;i--){
-            if(board[i][col] == 'Q'){
-                return false;
-            }
-        }
-
-        //diagnol-left:
-        for(int i=row-1 ,j=col-1; i>=0 && j>=0 ;i--,j--){
-            if(board[i][j] == 'Q'){
-                return false;
-            }
-        }
-
-        //diagnol-right:
-        for(int i=row-1,j=col+1;i>=0 && j<=board.length-1;i--,j++){
-            if(board[i][j]=='Q'){
-                return false;
-            }
-        }
-        return true;
-    }
-     
-
-    static int count =0;
-    public static void nQueens(char board[][],int row){
-        if(row == board.length){ 
+    public static void nQueens(char[][] board, int row, boolean[] columns, boolean[] diag1, boolean[] diag2) {
+        int n = board.length;
+        if (row == n) {
             print(board);
-            // count++;
+            count++;
             return;
         }
 
-        for(int col=0;col<board.length;col++){
-            if(isSafe(board,row,col)){
+        for (int col = 0; col < n; col++) {
+            int d1 = row - col + n - 1;
+            int d2 = row + col;
+
+            if (!columns[col] && !diag1[d1] && !diag2[d2]) {
+                // Place queen
                 board[row][col] = 'Q';
-                nQueens(board, row+1); // function call
-                board[row][col] = 'x';  //backtracking
+                columns[col] = diag1[d1] = diag2[d2] = true;
+
+                nQueens(board, row + 1, columns, diag1, diag2);
+
+                // Backtrack
+                board[row][col] = 'X';
+                columns[col] = diag1[d1] = diag2[d2] = false;
             }
         }
     }
 
-    public static void print(char board[][]){
+    public static void print(char[][] board) {
         System.out.println("-----------chess board------");
-        for(int i=0;i<board.length;i++){
-            for(int j=0;j<board[0].length;j++){
-               System.out.print(board[i][j]+" ");
+        for (char[] row : board) {
+            for (char cell : row) {
+                System.out.print(cell + " ");
             }
             System.out.println();
         }
+        System.out.println();
     }
+
     public static void main(String[] args) {
         int n = 4;
-        char board[][] = new char[n][n];
+        char[][] board = new char[n][n];
 
-        for(int i=0;i<n;i++){
-            for(int j=0;j<n;j++){
+        for (int i = 0; i < n; i++) {
+            for (int j = 0; j < n; j++) {
                 board[i][j] = 'X';
             }
         }
 
-        nQueens(board,0);
+        // Add branch and bound arrays
+        boolean[] columns = new boolean[n];
+        boolean[] diag1 = new boolean[2 * n - 1];
+        boolean[] diag2 = new boolean[2 * n - 1];
+
+        nQueens(board, 0, columns, diag1, diag2);
+
         System.out.println("The total counts are : " + count);
     }
 }
